@@ -129,7 +129,9 @@ const RecruitmentDashboard = () => {
       });
 
       setDocUpdate(defaultDocUpdate);
-      setStatus('서류 상태가 업데이트되었습니다.');
+      setStatus(
+        `문서 ${docUpdate.id} 상태가 업데이트되었습니다. 결격 해제라면 목록에서 사라졌는지 바로 아래 표에서 확인해주세요.`,
+      );
       await initData();
     } catch (error) {
       setError(error.response?.data?.error || '서류 상태 업데이트에 실패했습니다.');
@@ -256,8 +258,11 @@ const RecruitmentDashboard = () => {
                 <thead className="bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-4 py-3 font-semibold">이름</th>
+                    <th className="px-4 py-3 font-semibold">문서 ID</th>
+                    <th className="px-4 py-3 font-semibold">지원자 ID</th>
                     <th className="px-4 py-3 font-semibold">전공</th>
                     <th className="px-4 py-3 font-semibold">서류</th>
+                    <th className="px-4 py-3 font-semibold">상태</th>
                     <th className="px-4 py-3 font-semibold">결격 사유</th>
                   </tr>
                 </thead>
@@ -265,18 +270,21 @@ const RecruitmentDashboard = () => {
                   {disqualified.map((item, index) => (
                     <tr key={`${item.name}-${item.doc_type}-${index}`} className="transition hover:bg-slate-50">
                       <td className="px-4 py-4 font-semibold">{item.name}</td>
+                      <td className="px-4 py-4 text-slate-600">{item.doc_id}</td>
+                      <td className="px-4 py-4 text-slate-600">{item.applicant_id}</td>
                       <td className="px-4 py-4 text-slate-500">{item.major}</td>
                       <td className="px-4 py-4">
                         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
                           {item.doc_type}
                         </span>
                       </td>
+                      <td className="px-4 py-4 text-slate-500">{item.status}</td>
                       <td className="px-4 py-4 font-medium text-red-600">{item.reason}</td>
                     </tr>
                   ))}
                   {disqualified.length === 0 && (
                     <tr>
-                      <td colSpan="4" className="px-4 py-10 text-center text-slate-400">
+                      <td colSpan="7" className="px-4 py-10 text-center text-slate-400">
                         현재 결격 대상자가 없습니다.
                       </td>
                     </tr>

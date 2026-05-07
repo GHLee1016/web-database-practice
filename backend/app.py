@@ -59,7 +59,8 @@ def get_disqualified_list():
         conn = get_conn()
         with conn.cursor() as cur:
             query = """
-                SELECT a.name, a.major, d.doc_type, d.issue_note as reason
+                SELECT d.doc_id, a.applicant_id, a.name, a.major, d.doc_type, d.status,
+                       d.is_disqualified, d.issue_note as reason
                 FROM applicants a
                 JOIN documents d ON a.applicant_id = d.applicant_id
                 WHERE d.is_disqualified = TRUE
@@ -145,6 +146,7 @@ def update_document_status(doc_id):
                 UPDATE documents
                 SET status = %s, is_disqualified = %s, issue_note = %s
                 WHERE doc_id = %s
+                RETURNING doc_id, applicant_id, status, is_disqualified, issue_note
                 """,
                 (
                     data.get("status"),
@@ -153,8 +155,10 @@ def update_document_status(doc_id):
                     doc_id,
                 ),
             )
-            
-            if cur.rowcount == 0:
+
+            updated_document = cur.fetchone()
+
+            if not updated_document:
                 return jsonify({"error": "Document not found"}), 404
 
             # 2. 지원자 상태 자동 변경 (추가된 로직)
@@ -172,7 +176,8 @@ def update_document_status(doc_id):
             conn.commit()
             return jsonify({
                 "message": "Document and applicant status updated",
-                "applicant_status": "changed to '진행중' (if it was '불합격')"
+                "applicant_status": "changed to '진행중' (if it was '불합격')",
+                "document": updated_document,
             }), 200
             
     except Exception as e:

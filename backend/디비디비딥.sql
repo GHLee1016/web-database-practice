@@ -105,5 +105,3 @@ INSERT INTO evaluations (applicant_id, evaluator_id, score, eval_type, comment) 
 (2024103, 2022002, 70, '서류', '포트폴리오 링크 오류로 기술 역량 확인 불가'),
 (2024105, 2021055, 92, '서류', '경제 전공임에도 데이터 분석 도구 활용 능력이 뛰어남'),
 (2024105, 2022088, 94, '서류', '시계열 분석 경험이 학회 주제와 잘 맞음');
-
-ALTER TABLE applicants ADD COLUMN deleted_at TIMESTAMP DEFAULT NULL;
